@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chargebee Risk Scoring Framework for OSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="/api/placeholder/150/50" alt="Chargebee Logo" class="h-10">
+                <span class="ml-4 text-xl font-bold text-gray-800">Chargebee Risk Scoring Framework for OSS</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="bg-white shadow-xl rounded-lg overflow-hidden max-w-2xl mx-auto">
+            <div class="bg-blue-600 text-white p-6">
+                <h1 class="text-2xl font-bold">
+                    <i class="fas fa-chart-line mr-3"></i>Chargebee OSS Severity Calculator
+                </h1>
+                <p class="text-blue-100 mt-2">Assess and prioritize vulnerabilities with precision based on Chargebee Risk Scoring Framework for OSS </p>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <!-- CVSS Score -->
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Vulnerability Severity (CVSS Score)
+                    </label>
+                    <input type="number" id="cvssScore" min="0" max="10" step="0.1"
+                        class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition"
+                        placeholder="Enter CVSS Score (0-10)">
+                </div>
+
+                <!-- Repository Classification -->
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Repository Classification
+                    </label>
+                    <select id="repoClassification" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition">
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+
+                <!-- Dependency Type -->
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Dependency Type
+                    </label>
+                    <select id="dependencyType" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition">
+                        <option value="direct">Direct</option>
+                        <option value="firstLevel">First-Level Transitive</option>
+                        <option value="deep">Deep Transitive</option>
+                        <option value="unused">Unused</option>
+                    </select>
+                </div>
+
+                <!-- Vulnerability Reachability -->
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Vulnerability Reachability
+                    </label>
+                    <select id="reachability" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition">
+                        <option value="direct">Directly Reachable</option>
+                        <option value="potential">Potential Reachable </option>
+                        <option value="limited">Limited Possibility</option>
+                        <option value="none">No Practical Path</option>
+                    </select>
+                </div>
+
+                <!-- Remediation Availability -->
+                <div>
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Remediation Availability
+                    </label>
+                    <select id="remediation" class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition">
+                        <option value="immediate">Immediate Patch Available</option>
+                        <option value="minor">Patch with Minor Modifications</option>
+                        <option value="workaround">Workaround Exists</option>
+                        <option value="none">No Immediate Remediation</option>
+                        <option value="nonExploitable">Proven Non-Exploitable</option>
+                    </select>
+                </div>
+
+                <!-- Calculate Button -->
+                <button id="calculateBtn" class="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition font-semibold mt-4">
+                    Calculate Risk Rating
+                </button>
+
+                <!-- Results Display -->
+                <div id="results" class="hidden mt-4 p-4 border rounded bg-gray-50">
+                    <h2 class="font-bold text-lg">Risk Assessment Results</h2>
+                    <p>CVSS Score: <span id="displayCvssScore"></span></p>
+                    <p>Total Risk Rating: <span id="totalRating"></span></p>
+                    <p>Risk Classification: <span id="riskClassification"></span></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto text-center">
+            <p>© 2024 Chargebee | Enterprise Cyber Security </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function () {
+            // Retrieve inputs
+            const cvssScore = parseFloat(document.getElementById('cvssScore').value) || 0;
+            const repoClassification = document.getElementById('repoClassification').value;
+            const dependencyType = document.getElementById('dependencyType').value;
+            const reachability = document.getElementById('reachability').value;
+            const remediation = document.getElementById('remediation').value;
+
+            // Calculate scores with enhanced CVSS impact
+            const severityScore = calculateSeverityScore(cvssScore, repoClassification);
+            const assetScore = calculateAssetClassificationScore(repoClassification);
+            const dependencyScore = calculateDependencyTypeScore(dependencyType);
+            const reachabilityScore = calculateReachabilityScore(reachability);
+            const remediationScore = calculateRemediationScore(remediation);
+
+            // Enhanced total rating calculation with CVSS score as primary driver
+            const totalRating = calculateEnhancedTotalRating(
+                cvssScore, 
+                severityScore, 
+                assetScore, 
+                dependencyScore, 
+                reachabilityScore, 
+                remediationScore,
+                repoClassification
+            );
+
+            // Determine risk classification
+            const riskClassification = classifyRisk(totalRating, cvssScore, repoClassification);
+
+            // Display results
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('displayCvssScore').textContent = cvssScore.toFixed(1);
+            document.getElementById('totalRating').textContent = totalRating.toFixed(2);
+            document.getElementById('riskClassification').textContent = riskClassification;
+        });
+
+        // Enhanced total rating calculation
+        function calculateEnhancedTotalRating(
+            cvssScore, 
+            severityScore, 
+            assetScore, 
+            dependencyScore, 
+            reachabilityScore, 
+            remediationScore,
+            repoClassification
+        ) {
+            // Ensure CVSS score is between 0 and 10
+            const normalizedCvssScore = Math.max(0, Math.min(10, cvssScore));
+            
+            // CVSS score is the primary driver, but asset classification provides a ceiling
+            const assetClassificationCeiling = {
+                critical: 10,
+                high: 8,
+                medium: 6,
+                low: 4
+            };
+            
+            const cvssWeight = normalizedCvssScore / 10; // Normalize CVSS to 0-1 range
+            const assetCeiling = assetClassificationCeiling[repoClassification] / 10;
+
+            // Calculate weighted scores
+            const enhancedSeverityScore = severityScore * 0.3;
+            const enhancedAssetScore = assetScore * 0.2;
+            const enhancedDependencyScore = dependencyScore * 0.15;
+            const enhancedReachabilityScore = reachabilityScore * 0.2;
+            const enhancedRemediationScore = remediationScore * 0.15;
+
+            // Combine scores with CVSS as the primary multiplier, but respect asset classification ceiling
+            const totalRating = Math.min(
+                normalizedCvssScore, 
+                assetCeiling * 10
+            ) * (
+                enhancedSeverityScore +
+                enhancedAssetScore +
+                enhancedDependencyScore +
+                enhancedReachabilityScore +
+                enhancedRemediationScore
+            ) / 10;
+
+            // Ensure final rating is between 0 and 10
+            return Math.max(0, Math.min(10, totalRating));
+        }
+
+        function calculateSeverityScore(cvssScore, repoClassification) {
+            const ceilings = { critical: 10, high: 8, medium: 6.9, low: 4 };
+            return Math.min(cvssScore, ceilings[repoClassification]);
+        }
+
+        function calculateAssetClassificationScore(repoClassification) {
+            const scores = { critical: 10, high: 7, medium: 4, low: 1 };
+            return scores[repoClassification];
+        }
+
+        function calculateDependencyTypeScore(dependencyType) {
+            const scores = { direct: 10, firstLevel: 7, deep: 3, unused: 1 };
+            return scores[dependencyType];
+        }
+
+        function calculateReachabilityScore(reachability) {
+            const scores = { direct: 10, potential: 6, limited: 3, none: 1 };
+            return scores[reachability];
+        }
+
+        function calculateRemediationScore(remediation) {
+            const scores = {
+                immediate: 10,
+                minor: 7,
+                workaround: 4,
+                none: 1,
+                nonExploitable: 0
+            };
+            return scores[remediation];
+        }
+
+        function classifyRisk(totalRating, cvssScore, repoClassification) {
+            // Create a mapping that ensures risk classification respects asset classification
+            const riskLevels = [
+                { 
+                    threshold: 8, 
+                    label: 'Critical Risk',
+                    requiredRepoClassification: ['critical']
+                },
+                { 
+                    threshold: 6, 
+                    label: 'High Risk',
+                    requiredRepoClassification: ['critical', 'high']
+                },
+                { 
+                    threshold: 3, 
+                    label: 'Medium Risk',
+                    requiredRepoClassification: ['critical', 'high', 'medium']
+                },
+                { 
+                    threshold: 2, 
+                    label: 'Low Risk',
+                    requiredRepoClassification: ['critical', 'high', 'medium', 'low']
+                },
+                { 
+                    threshold: 0, 
+                    label: 'Negligible Risk',
+                    requiredRepoClassification: ['critical', 'high', 'medium', 'low']
+                }
+            ];
+
+            // Classify based on total rating and allowed repository classifications
+            for (let { threshold, label, requiredRepoClassification } of riskLevels) {
+                if (
+                    totalRating >= threshold && 
+                    requiredRepoClassification.includes(repoClassification)
+                ) {
+                    return label;
+                }
+            }
+
+            return 'Negligible Risk';
+        }
+    </script>
+</body>
+</html>
