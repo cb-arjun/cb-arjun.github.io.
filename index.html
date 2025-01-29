@@ -111,7 +111,7 @@
                         </button>
                     </div>
                     <p>CVSS Score: <span id="displayCvssScore"></span></p>
-                    <p>CB OSS Rating: <span id="totalRating"></span></p>
+                    <p>CB OSSgi Rating: <span id="totalRating"></span></p>
                     <p>Risk Classification: <span id="riskClassification"></span></p>
                 </div>
             </div>
@@ -230,9 +230,9 @@
 
         function calculateRemediationScore(remediation) {
             const scores = {
-                immediate: 10,
-                minor: 7,
-                workaround: 4,
+                immediate: 5,
+                minor: 4,
+                workaround: 3,
                 none: 1,
                 nonExploitable: 0
             };
