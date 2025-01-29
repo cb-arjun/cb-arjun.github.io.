@@ -111,7 +111,7 @@
                         </button>
                     </div>
                     <p>CVSS Score: <span id="displayCvssScore"></span></p>
-                    <p>CB OSS Risk Rating: <span id="totalRating"></span></p>
+                    <p>CB OSS Rating: <span id="totalRating"></span></p>
                     <p>Risk Classification: <span id="riskClassification"></span></p>
                 </div>
             </div>
@@ -186,11 +186,11 @@
             const assetCeiling = assetClassificationCeiling[repoClassification] / 10;
 
             // Calculate weighted scores
-            const enhancedSeverityScore = severityScore * 0.4;
-            const enhancedAssetScore = assetScore * 0.3;
+            const enhancedSeverityScore = severityScore * 0.3;
+            const enhancedAssetScore = assetScore * 0.2;
             const enhancedDependencyScore = dependencyScore * 0.15;
-            const enhancedReachabilityScore = reachabilityScore * 0.10;
-            const enhancedRemediationScore = remediationScore * 0.05;
+            const enhancedReachabilityScore = reachabilityScore * 0.2;
+            const enhancedRemediationScore = remediationScore * 0.15;
 
             // Combine scores with CVSS as the primary multiplier, but respect asset classification ceiling
             const totalRating = Math.min(
@@ -243,22 +243,22 @@
             // Create a mapping that ensures risk classification respects asset classification
             const riskLevels = [
                 { 
-                    threshold: 9, 
+                    threshold: 8, 
                     label: 'Critical Risk',
                     requiredRepoClassification: ['critical']
                 },
                 { 
-                    threshold: 7, 
+                    threshold: 6, 
                     label: 'High Risk',
                     requiredRepoClassification: ['critical', 'high']
                 },
                 { 
-                    threshold: 4, 
+                    threshold: 3, 
                     label: 'Medium Risk',
                     requiredRepoClassification: ['critical', 'high', 'medium']
                 },
                 { 
-                    threshold: 1, 
+                    threshold: 2, 
                     label: 'Low Risk',
                     requiredRepoClassification: ['critical', 'high', 'medium', 'low']
                 },
