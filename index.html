@@ -181,11 +181,11 @@
             const assetCeiling = assetClassificationCeiling[repoClassification] / 10;
 
             // Calculate weighted scores
-            const enhancedSeverityScore = severityScore * 0.3;
+            const enhancedSeverityScore = severityScore * 0.4;
             const enhancedAssetScore = assetScore * 0.2;
-            const enhancedDependencyScore = dependencyScore * 0.15;
-            const enhancedReachabilityScore = reachabilityScore * 0.2;
-            const enhancedRemediationScore = remediationScore * 0.15;
+            const enhancedDependencyScore = dependencyScore * 0.2;
+            const enhancedReachabilityScore = reachabilityScore * 0.15;
+            const enhancedRemediationScore = remediationScore * 0.05;
 
             // Combine scores with CVSS as the primary multiplier, but respect asset classification ceiling
             const totalRating = Math.min(
