@@ -103,15 +103,10 @@
                 </button>
 
                 <!-- Results Display -->
-                  <div id="results" class="hidden mt-4 p-4 border rounded bg-gray-50">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="font-bold text-lg">Risk Assessment Results</h2>
-                        <button id="copyResultsBtn" class="text-blue-600 hover:text-blue-800 transition">
-                            <i class="fas fa-copy mr-2"></i>Copy Results
-                        </button>
-                    </div>
+                <div id="results" class="hidden mt-4 p-4 border rounded bg-gray-50">
+                    <h2 class="font-bold text-lg">Risk Assessment Results</h2>
                     <p>CVSS Score: <span id="displayCvssScore"></span></p>
-                    <p>CB OSSgi Rating: <span id="totalRating"></span></p>
+                    <p>Total Risk Rating: <span id="totalRating"></span></p>
                     <p>Risk Classification: <span id="riskClassification"></span></p>
                 </div>
             </div>
@@ -230,9 +225,9 @@
 
         function calculateRemediationScore(remediation) {
             const scores = {
-                immediate: 5,
-                minor: 4,
-                workaround: 3,
+                immediate: 10,
+                minor: 7,
+                workaround: 4,
                 none: 1,
                 nonExploitable: 0
             };
@@ -243,17 +238,17 @@
             // Create a mapping that ensures risk classification respects asset classification
             const riskLevels = [
                 { 
-                    threshold: 8.9, 
+                    threshold: 8, 
                     label: 'Critical Risk',
                     requiredRepoClassification: ['critical']
                 },
                 { 
-                    threshold: 6.9, 
+                    threshold: 6, 
                     label: 'High Risk',
                     requiredRepoClassification: ['critical', 'high']
                 },
                 { 
-                    threshold: 3.9, 
+                    threshold: 3, 
                     label: 'Medium Risk',
                     requiredRepoClassification: ['critical', 'high', 'medium']
                 },
@@ -281,44 +276,6 @@
 
             return 'Negligible Risk';
         }
-
-         document.getElementById('copyResultsBtn').addEventListener('click', function() {
-            const resultsDiv = document.getElementById('results');
-            const resultText = `Risk Assessment Results:
-CVSS Score: ${document.getElementById('displayCvssScore').textContent}
-Total Risk Rating: ${document.getElementById('totalRating').textContent}
-Risk Classification: ${document.getElementById('riskClassification').textContent}`;
-
-            // Create a temporary textarea to copy text
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = resultText;
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            
-            try {
-                // Execute the copy command
-                document.execCommand('copy');
-                
-                // Optional: Provide visual feedback
-                const copyBtn = document.getElementById('copyResultsBtn');
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
-                copyBtn.classList.remove('text-blue-600');
-                copyBtn.classList.add('text-green-600');
-                
-                // Revert back after 2 seconds
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('text-green-600');
-                    copyBtn.classList.add('text-blue-600');
-                }, 2000);
-            } catch (err) {
-                console.error('Unable to copy results', err);
-            }
-            
-            // Remove the temporary textarea
-            document.body.removeChild(tempTextArea);
-        });
     </script>
 </body>
 </html>
